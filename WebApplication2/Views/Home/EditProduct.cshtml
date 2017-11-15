@@ -1,0 +1,47 @@
+﻿
+@{
+    ViewBag.Title = "View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using WebApplication2.Models
+@model ProductModel
+<br/>
+<br/>
+<label>Product Name</label>
+@Html.EditorFor(m=>m.ProductName ,new { @id= "name" })
+<label>Product Price</label>
+@Html.EditorFor(m => m.ProductPrice, new { @id = "price" })
+<label>Product Description</label>
+@Html.EditorFor(m => m.ProductDesc, new { @id = "desc" })
+<label>Product Quantity</label>
+@Html.EditorFor(m => m.ProductQuantity, new { @id = "quantity" })
+<button id="addproduct">Update</button>
+
+<script>
+    $(function () {
+        $("#addproduct").click(function () {
+            var name = $("#ProductName").val();
+            var price = $("#ProductPrice").val();
+            var desc = $("#ProductDesc").val();
+            var quantity = $("#ProductQuantity").val();
+            var id = @Model.ProductId;
+            if ((name == null || name == "") || (price == null || price == "") || (desc == null || desc == "") || (quantity == null || quantity == "")) {
+                alert("Please fill all the fields");
+            }
+            else {
+                var d = { 'ProductName': name, 'ProductPrice': price, 'ProductDesc': desc, 'ProductQuantity': quantity ,'ProductId':id};
+                $.ajax({
+                    type: "Post",
+                    url: "/Home/EditProduct",
+                    data: JSON.stringify(d),
+                    contentType: "application/json;charset=utf-8",
+                    success: function (result) {
+                        window.location = "/Home/Index";
+                    }
+                });
+            }
+        });
+    });
+
+</script>
+

@@ -1,0 +1,82 @@
+﻿
+@{
+    ViewBag.Title = "View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<br/>
+<br/>
+<label>Product Name</label>
+<input id="name" type="text" required />
+<label>Product Price</label>
+<input id="price" type="number" required />
+<label>Product Description</label>
+<input id="desc" type="text" required />
+<label>Product Quantity</label>
+<input id="quantity" type="number" required />
+<button id="addproduct">Add</button>
+<br />
+<br />
+<table border="1" cellpadding="2" cellspacing="2" align="center">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Description</th>
+            <th colspan="2">Action</th>
+        </tr>
+    </thead>
+    <tbody id="body"></tbody>
+</table>
+<script>
+    $(document).ready(function () {
+        $.ajax({
+            type: "GET",
+            url: "/Home/GetList",
+            success: function (result) {
+                result = result.data;
+                if (result.length > 0) {
+                    result.forEach(function (item) {
+                        var prodId = item.ProductId;
+
+                        $('#body').append("<tr><td>" + item.ProductName + "</td><td>" + item.ProductPrice + "</td><td>" + item.ProductQuantity + "</td><td>" + item.ProductDesc + "</td><td><a href='/Home/EditProduct?id=" + prodId + "'>EDIT<a/></td><td><a href='/Home/DeleteProduct?id=" + prodId + "'>DELETE<a/></td></tr>");
+
+                    }, this)
+                }
+                else
+                {
+                    $('#body').append("<td colspan='5'><center>No products to show!</center></td>");
+                }
+
+
+            }
+        });
+    });
+
+
+    $(function () {
+        $("#addproduct").click(function () {
+            var name = $("#name").val();
+            var price = $("#price").val();
+            var desc = $("#desc").val();
+            var quantity = $("#quantity").val();
+            if ((name == null || name == "") || (price == null || price == "") || (desc == null || desc == "") || (quantity == null || quantity == "")) {
+                alert("Please fill all the fields");
+            }
+            else {
+                var d = { 'ProductName': name, 'ProductPrice': price, 'ProductDesc': desc, 'ProductQuantity': quantity };
+                $.ajax({
+                    type: "POST",
+                    url: "/Home/AddProduct",
+                    data: JSON.stringify(d),
+                    contentType: "application/json;charset=utf-8",
+                    success: function (result) {
+                        window.location = "/Home/Index";
+                    }
+                });
+            }
+        });
+    });
+
+</script>
+
